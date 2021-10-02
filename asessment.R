@@ -72,6 +72,20 @@ q + geom_line(aes(y= value, x=seq_len(nrow(df_media)))) +
 #Is there anything worth mentioning from the plot?
 #First, each variable has a different scale
 #Second, the variable "radio" goes to zero suddenly multiple times. 
-#This might indicate that those zero values are actually NAs
+#This might indicate that those zero values are actually NAs.
+#Also the variable "radio" ends before the others. 
 
 
+#8----
+
+p + geom_point(aes(in_store, new_vol_sales))
+#Explain your decision and also comment anything interesting from the plot.
+
+#I have set the target variable "new_vol_sales" as the y
+#The target variable is analogous to the dependent variable of a regression model
+#and is always represented on the y axis.  
+
+#There seems to be some positive correlation between the stock of the product
+#and its sales. This might be because more stock leads to higher sells or more likely
+#because higher sells leads to stores expanding their stock. Anyway there
+#is not much to say about causation just by taking a look at a scatterplot.
