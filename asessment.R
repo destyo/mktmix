@@ -1,7 +1,6 @@
-#
-# R programming asessment. Marketing Mix Model. 
-#
-
+#----------------------------------------------
+# R programming assessment. Marketing Mix Model. 
+#----------------------------------------------
 library(dplyr)
 library(ggplot2)
 library(janitor)
@@ -89,3 +88,18 @@ p + geom_point(aes(in_store, new_vol_sales))
 #and its sales. This might be because more stock leads to higher sells or more likely
 #because higher sells leads to stores expanding their stock. Anyway there
 #is not much to say about causation just by taking a look at a scatterplot.
+
+#9----
+
+# Color each dot differently based on the newspaper_inserts column
+p + geom_point(aes(in_store, new_vol_sales, color=as.factor(newspaper_inserts)))
+# Color each dot differently based on the tv column.
+p + geom_point(aes(in_store, new_vol_sales, color=tv))
+
+#10----
+df_mmm %>% 
+  mutate(as.numeric(discount_yesno <- discount==0)) %>% 
+  data_frame(mean(base_price[discount_yesno ==0]), mean(base_price[discount_yesno ==1]))
+
+
+
