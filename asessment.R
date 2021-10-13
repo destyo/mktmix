@@ -1,6 +1,7 @@
 #----------------------------------------------
 # R programming assessment. Marketing Mix Model. 
 #----------------------------------------------
+
 library(dplyr)
 library(ggplot2)
 library(janitor)
@@ -20,7 +21,10 @@ ncol(df_mmm)
 nrow(df_mmm)
 class(base_price)
 class(discount)
-# Try and guess what they mean. ??
+#The variable 'base_price' contains information about the original 
+#price of the product without additional charges or discounts 
+#whereas 'discount' contains information about the relative size of the discount
+#applied to 'base price' in some products. 
 
 #3----
 
@@ -45,14 +49,15 @@ p + geom_line(aes(x=index(df_mmm),y=new_vol_sales), colour= "red")
 
 p + geom_histogram(aes(x=new_vol_sales),fill= "red",binwidth=250)
 p + geom_boxplot(aes(y=new_vol_sales))
-#it can be said by looking at the boxplot that the median is slightly below 20,000
-median(new_vol_sales) #it is in fact slightly below 20,000
+#it can be said by taking a look at the boxplot that the median is slightly below 20,000
+median(new_vol_sales) 
+#it is in fact slightly below 20,000
 
 #7----
 
 df_media <- df_mmm %>% 
   select(tv, radio, stout)
-#With R base 
+#R base 
 par(mfrow=c(3,1))
 plot(y=radio, x=seq_len(nrow(df_media)))
 lines(y=radio, x=seq_len(nrow(df_media)))
@@ -64,15 +69,16 @@ lines(y=tv, x=seq_len(nrow(df_media)))
 
 df_media <- df_media %>%
   pivot_longer(everything())
-#With ggplot2
+
+#ggplot2
 q <- ggplot(data = df_media)
 q + geom_line(aes(y= value, x=seq_len(nrow(df_media)))) +
   facet_grid(name~., scales="free")
+
 #Is there anything worth mentioning from the plot?
 #First, each variable has a different scale
-#Second, the variable "radio" goes to zero suddenly multiple times. 
-#This might indicate that those zero values are actually NAs.
-#Also the variable "radio" ends before the others. 
+#Second, the variable "radio" has multiple zero values and some NAs at the end
+#whereas the others do not have any zeros or NAs. 
 
 
 #8----
@@ -92,14 +98,38 @@ p + geom_point(aes(in_store, new_vol_sales))
 #9----
 
 # Color each dot differently based on the newspaper_inserts column
-p + geom_point(aes(in_store, new_vol_sales, color=as.factor(newspaper_inserts)))
+p + geom_point(aes(in_store, new_vol_sales, color=as.factor(newspaper_inserts))) + theme(legend.title = element_blank())
 # Color each dot differently based on the tv column.
 p + geom_point(aes(in_store, new_vol_sales, color=tv))
 
 #10----
 df_mmm %>% 
-  mutate(as.numeric(discount_yesno <- discount==0)) %>% 
-  data_frame(mean(base_price[discount_yesno ==0]), mean(base_price[discount_yesno ==1]))
+  group_by(discount_yesno = (discount_yesno <- discount==0)) %>%
+  summarise(medias = mean(base_price)) %>% 
+  ggplot() + geom_col(aes(x=discount_yesno, y= medias, fill=discount_yesno ), show.legend = F,)+
+  labs(y="Average Base Price", x="Discount")
+#The average base price of discounted products is slightly higher than  the average 
+#base price of undiscounted products. 
+
+#11----
+
+model.fit <- function(variables) {
+  df_aux <- df_mmm %>% 
+    select(new_vol_sales,variables)
+  my_model <- lm(new_vol_sales ~ ., data = df_aux)
+  summary(my_model)$adj.r.squared
+    }
+
+model.fit("twitter") #Trial with one variable
+model.fit(c("base_price","radio","website_campaign")) #Trial with multiple variables
+
+
+#12----
+
+list1 <-list(c("base_price", "radio", "tv", "stout"),c("base_price", "in_store", "discount", "radio", "tv", "stout"),c("in_store", "discount"))
+sapply(list1,model.fit)
+    
+#The second subset of variables provides the best model with an adjusted Rsq of 0.784
 
 
 
