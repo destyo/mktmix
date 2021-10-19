@@ -104,10 +104,12 @@ p + geom_point(aes(in_store, new_vol_sales, color=tv))
 
 #10----
 df_mmm %>% 
-  group_by(discount_yesno = (discount_yesno <- discount==0)) %>%
+  group_by(discount_yesno = (discount_yesno <- discount!=0)) %>%
   summarise(medias = mean(base_price)) %>% 
   ggplot() + geom_col(aes(x=discount_yesno, y= medias, fill=discount_yesno ), show.legend = F,)+
-  labs(y="Average Base Price", x="Discount")
+  labs(y="Average Base Price", x="Discount") +
+  coord_cartesian(ylim=c(14,15.5))
+
 #The average base price of discounted products is slightly higher than  the average 
 #base price of undiscounted products. 
 
