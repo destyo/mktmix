@@ -110,8 +110,8 @@ df_mmm %>%
   labs(y="Average Base Price", x="Discount") +
   coord_cartesian(ylim=c(14,15.5))
 
-#The average base price of discounted products is slightly higher than  the average 
-#base price of undiscounted products. 
+#The average base price of undiscounted products is slightly higher than  the average 
+#base price of discounted products. 
 
 #11----
 
